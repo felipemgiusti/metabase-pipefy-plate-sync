@@ -82,7 +82,7 @@ def get_metabase_rows() -> List[Dict[str, Any]]:
         headers=headers,
         json={},
         timeout=90,
-        verify=False  # 👈 adiciona isso
+        verify=False  
     )
     response.raise_for_status()
 
@@ -104,7 +104,7 @@ def pipefy_graphql(query: str, variables: Dict[str, Any]) -> Dict[str, Any]:
         headers=headers,
         json={"query": query, "variables": variables},
         timeout=90,
-        verify=False  # 👈 adiciona aqui também
+        verify=False  
     )
     response.raise_for_status()
 
@@ -202,7 +202,7 @@ def process() -> None:
 
             card_id = create_pipefy_card(row)
 
-            # 👇 só salva se NÃO for DRY RUN
+            #  só salva se NÃO for DRY RUN
             if not DRY_RUN:
                 processed_keys.add(unique_key)
                 save_processed_keys(processed_keys)
