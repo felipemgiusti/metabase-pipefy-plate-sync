@@ -1,0 +1,7 @@
+venv/
+.env
+processed_rows.json
+__pycache__/
+*.pyc
+.vscode/
+*.log
