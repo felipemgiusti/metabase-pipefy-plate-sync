@@ -3,7 +3,7 @@ name: Pipefy Sync Sem Placas
 on:
   workflow_dispatch:
   schedule:
-    - cron: "43 1 * * *"
+    - cron: "43 0 * * *"
 
 jobs:
   run-sync:
