@@ -29,6 +29,7 @@ PIPEFY_FIELDS = {
     "license_plate": "placa",
     "city": "localiza_o",
     "created_at_brt": "data_da_solicita_o",
+    "pendencia": "qual_a_pendencia_1",
 }
 
 
@@ -82,7 +83,7 @@ def get_metabase_rows() -> List[Dict[str, Any]]:
         headers=headers,
         json={},
         timeout=90,
-        verify=False  
+        verify=False  # 👈 adiciona isso
     )
     response.raise_for_status()
 
@@ -104,7 +105,7 @@ def pipefy_graphql(query: str, variables: Dict[str, Any]) -> Dict[str, Any]:
         headers=headers,
         json={"query": query, "variables": variables},
         timeout=90,
-        verify=False  
+        verify=False  # 👈 adiciona aqui também
     )
     response.raise_for_status()
 
@@ -120,6 +121,7 @@ def build_fields_attributes(row: Dict[str, Any]) -> List[Dict[str, Any]]:
     license_plate = normalize_text(row.get("license_plate"))
     city = normalize_text(row.get("city"))
     request_date = normalize_text(row.get("created_at_brt"))
+    pendencia = normalize_text(row.get("pendencia"))
 
     if not license_plate:
         raise ValueError("license_plate vazio")
@@ -129,6 +131,9 @@ def build_fields_attributes(row: Dict[str, Any]) -> List[Dict[str, Any]]:
 
     if not request_date:
         raise ValueError("created_at_brt vazio")
+    
+    if not pendencia:
+        raise ValueError("pendencia vazia")
 
     return [
         {
@@ -143,6 +148,10 @@ def build_fields_attributes(row: Dict[str, Any]) -> List[Dict[str, Any]]:
             "field_id": PIPEFY_FIELDS["created_at_brt"],
             "field_value": request_date,
         },
+        {
+            "field_id": PIPEFY_FIELDS["pendencia"],
+            "field_value": pendencia,
+        },
     ]
 
 def create_pipefy_card(row: Dict[str, Any]) -> str:
@@ -154,6 +163,7 @@ def create_pipefy_card(row: Dict[str, Any]) -> str:
         print("Placa:", row.get("license_plate"))
         print("Cidade:", row.get("city"))
         print("Data:", row.get("created_at_brt"))
+        print("Pendência:", row.get("pendencia"))
         print("Fields:", fields)
         return "DRY_RUN"
 
@@ -202,7 +212,7 @@ def process() -> None:
 
             card_id = create_pipefy_card(row)
 
-            #  só salva se NÃO for DRY RUN
+            # 👇 só salva se NÃO for DRY RUN
             if not DRY_RUN:
                 processed_keys.add(unique_key)
                 save_processed_keys(processed_keys)
@@ -211,6 +221,7 @@ def process() -> None:
                 f"[OK] Card criado: {card_id} | "
                 f"placa={row.get('license_plate')} | "
                 f"cidade={row.get('city')} | "
+                f"pendencia={row.get('pendencia')} | "
                 f"data={row.get('created_at_brt')}"
             )
             created += 1
